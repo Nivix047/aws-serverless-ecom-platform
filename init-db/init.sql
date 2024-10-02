@@ -18,6 +18,16 @@ CREATE TABLE products (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Create purchases table
+CREATE TABLE purchases (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id),
+    product_id INT REFERENCES products(id),
+    quantity INT CHECK (quantity > 0),
+    purchased_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
 -- Insert 10 users
 INSERT INTO users (first_name, last_name, email) VALUES
 ('John', 'Doe', 'john.doe@example.com'),
