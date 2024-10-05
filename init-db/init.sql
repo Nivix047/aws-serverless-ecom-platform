@@ -1,5 +1,5 @@
 -- Create users table
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     first_name VARCHAR(100),
     last_name VARCHAR(100),
@@ -9,7 +9,7 @@ CREATE TABLE users (
 );
 
 -- Create products table
-CREATE TABLE products (
+CREATE TABLE IF NOT EXISTS products (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100),
     description TEXT,
@@ -17,9 +17,8 @@ CREATE TABLE products (
     stock INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
 -- Create purchases table
-CREATE TABLE purchases (
+CREATE TABLE IF NOT EXISTS purchases (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(id),
     product_id INT REFERENCES products(id),
