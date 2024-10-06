@@ -1,138 +1,83 @@
-# AWS RDS, Lambda, API Gateway, Honeycode, CI/CD Project
+# AWS RDS Database Management Project
 
-## Project Objective
+## Project Overview
 
-The goal of this project is to deploy a professional, scalable, and secure architecture using AWS services for database management, backend logic, frontend data entry, and automated infrastructure deployment. This project will **NOT use Terraform** for Infrastructure as Code (IAC). Instead, it will focus on manual deployment to gain hands-on experience with AWS services. A future project will include Terraform to automate these deployments.
+This repository is part of a larger project and focuses exclusively on the **database** management using **AWS RDS (PostgreSQL)**. The database is containerized using **Docker**, and the project is designed to ensure secure, scalable, and efficient database management in the cloud. Key features include **data encryption at rest**, automated **backup and recovery** strategies, and integration with a broader AWS architecture.
 
----
+The other components of the project—such as **Lambda functions**, **API Gateway**, and **ECR**—will be managed in a separate repository, with the frontend created using **AWS Honeycode**. The overall goal is to test **AWS deployment** and build a **serverless cloud structure**.
 
-## Key Components
+## Key Features
 
-### 1. **AWS RDS** (Relational Database Service)
+- **AWS RDS (PostgreSQL)**: Used for managing relational data with high availability, automated backups, and encryption at rest.
+- **Docker Containerization**: Ensures consistent environment setup for database management and testing.
+- **Data Encryption at Rest**: All data stored in AWS RDS is encrypted using AWS KMS to ensure security.
+- **Backup and Recovery**: Automated backup configuration and point-in-time recovery to prevent data loss.
 
-- **Purpose**: To host and manage the database with scalability, backups, and durability.
-- **Database**: Postgres deployed via RDS.
-- **Security**: Utilize VPC, subnets, and security groups to ensure the database is not publicly accessible. IAM roles will manage secure access.
+## Repository Contents
 
-### 2. **AWS Lambda**
+This repository contains the following key files:
 
-- **Purpose**: Serve as the backend for executing serverless logic.
-- **Usage**: Lambda functions will process API requests (via API Gateway) and interact with the RDS database.
-- **Key Benefits**: Scalability and a pay-per-execution model optimize costs.
+1. **init-db/init.sql**: SQL script to initialize the database with tables (`users`, `products`, `purchases`) and sample data.
+2. **app.py**: Python script to establish a connection to the RDS instance and run the SQL script for database initialization.
+3. **Dockerfile**: Defines the containerized environment using Python 3.11, and installs necessary dependencies.
+4. **docker-compose.yml**: Sets up the containerized services for the project, including environment variables for database connection.
+5. **.env**: A file (not included in this repo for security reasons) that contains environment variables like database host, port, username, and password.
 
-### 3. **AWS API Gateway**
+## Getting Started
 
-- **Purpose**: Expose Lambda functions as REST APIs for external or internal use.
-- **Security**: Implement API authentication and authorization using AWS IAM roles or API keys.
-- **Endpoints**: Create API endpoints for frontend data submission, retrieval, and modification operations.
+### Prerequisites
 
-### 4. **AWS Honeycode** (Frontend)
+- AWS RDS instance for PostgreSQL, set up with **data encryption at rest** and **automated backups**.
+- Docker and Docker Compose installed on your local machine.
+- PostgreSQL client (pgAdmin, psql) for testing.
 
-- **Purpose**: Provide a low-code/no-code interface for admins, salespeople, or users to interact with the system.
-- **Usage**: Create forms and interfaces to input customer data and view reports.
-- **Integration**: Communicate with API Gateway to push and pull data via Lambda functions.
+### Setup Steps
 
-### 5. **CI/CD Pipeline** (Continuous Integration/Continuous Deployment)
+1. **Create AWS RDS Instance**:
 
-- **Purpose**: Automate code deployment to Lambda functions and ensure efficient updates.
-- **Tools**: GitHub Actions or Jenkins for continuous integration and deployment.
-- **Steps**:
-  1. Code changes trigger the pipeline.
-  2. Lambda and API Gateway updates are deployed.
-- **Testing**: Unit and integration tests are executed before deployment to ensure quality.
+   - Set up a PostgreSQL RDS instance via the AWS Management Console.
+   - Ensure the instance is in a private VPC and has encryption at rest enabled.
+   - Configure automated backups and point-in-time recovery.
 
-### 6. **Containers**
+2. **Configure Environment Variables**:
 
-- **Purpose**: Provide isolated environments for development and QA.
-- **Docker**: Used for local development, testing, and integration with CI/CD pipelines.
+   - Create a `.env` file at root.
 
-### 7. **QA Tools**
+3. **Run the Application**:
 
-- **Code Quality**: Utilize **SonarQube** or **Pylint** for Python code analysis.
-- **Automated Testing**: Unit tests with **Pytest** for Lambda functions and integration tests for API Gateway endpoints.
-- **Load Testing**: Tools like **Postman** or **k6** for API testing and performance benchmarks.
+   - Build and run the Docker containers using Docker Compose:
 
----
+     ```bash
+     docker-compose up --build
+     ```
 
-## Project Workflow
+   - This will set up a Python container that connects to the RDS instance and initializes the database with the SQL scripts.
 
-1. **Development**:
+4. **Verify Database Setup**:
+   - Use a PostgreSQL client to verify that the `users`, `products`, and `purchases` tables have been created in your RDS instance.
+   - Sample data should also be present in these tables, as defined in `init.sql`.
 
-   - **Local Development**: Use Docker containers for local development environments.
-   - **Code Management**: Version control with Git, with branches for feature development, testing, and production releases.
+## Security and Best Practices
 
-2. **Infrastructure Deployment**:
+- **Encryption at Rest**: AWS KMS is used to ensure that all data stored in RDS is encrypted.
+- **IAM Roles**: Use least-privilege IAM roles to restrict access to the RDS instance.
+- **Backup and Recovery**: Automated backups and point-in-time recovery are enabled to safeguard against data loss.
 
-   - **Manual AWS Deployment**: All AWS resources (RDS, Lambda, API Gateway, etc.) will be manually deployed through the AWS Management Console.
+## Future Enhancements
 
-3. **Database Management**:
-
-   - **Postgres in RDS**: Automated backups and scaling for the database.
-   - **API Communication**: Lambda functions will execute SQL queries and updates to RDS via API Gateway.
-
-4. **Frontend**:
-   - **AWS Honeycode**: Provides a GUI for users to submit and view data.
-   - **API Integration**: Calls are made to API Gateway to interact with the backend.
+- **Infrastructure as Code (IAC)**: Future updates will integrate **Terraform** to automate the setup and scaling of the AWS infrastructure.
+- **Separate Repositories**: A separate repository will manage the backend (Lambda functions), containerization (ECR), and API Gateway integration, along with frontend development using AWS Honeycode.
 
 ---
 
-## Scalability and Best Practices
+## Other Repositories
 
-- **Security**:
-
-  - Use AWS Identity and Access Management (IAM) for granular permissions.
-  - Encrypt data at rest (RDS encryption) and in transit (TLS for API Gateway).
-
-- **Scalability**:
-
-  - Lambda functions automatically scale based on demand.
-  - RDS can be configured for auto-scaling read replicas.
-
-- **Performance Monitoring**:
-  - **AWS CloudWatch**: Used to monitor Lambda execution, API Gateway performance, and RDS metrics.
-  - **Alerts**: Set up CloudWatch alarms to notify about threshold breaches (e.g., high error rates, slow query times).
-
----
-
-## Next Steps
-
-1. **Set Up Initial Infrastructure**:
-
-   - Manually create RDS, Lambda, API Gateway, and necessary networking components via the AWS Management Console.
-
-2. **Develop Lambda Functions**:
-
-   - Build functions for handling CRUD operations with the RDS database.
-
-3. **Create API Gateway Endpoints**:
-
-   - Design REST API routes that integrate with Lambda functions.
-
-4. **Build CI/CD Pipeline**:
-
-   - Set up GitHub Actions (or an alternative) to automate Lambda function deployment upon new commits.
-
-5. **Integrate QA**:
-
-   - Integrate automated testing, linting, and static code analysis into the CI pipeline.
-
-6. **Deploy Frontend with AWS Honeycode**:
-   - Build forms and views for data input/output.
+- **Backend and Frontend Integration**: Lambda functions, API Gateway, and ECR will be managed in another repository. This includes frontend development using **AWS Honeycode**.
 
 ---
 
 ## Technologies Used
 
-- **AWS RDS**: For relational database management (Postgres).
-- **AWS Lambda**: For serverless backend functions.
-- **AWS API Gateway**: For exposing Lambda functions as RESTful APIs.
-- **AWS Honeycode**: For creating frontend data entry forms.
-- **CI/CD Pipeline**: GitHub Actions or Jenkins for continuous integration and deployment.
-- **Docker**: For containerization in development and testing environments.
-- **QA Tools**: SonarQube, Pytest, Insomnia for quality assurance and testing.
-
----
-
-## Future Enhancements
-
-In the next project, Terraform will be introduced to manage infrastructure as code (IAC) to simplify deployments and ensure consistency across environments. For now, the focus is on understanding and mastering AWS services through manual deployments.
+- **AWS RDS (PostgreSQL)**: Relational database management.
+- **Docker**: Containerization for local development.
+- **psycopg2**: PostgreSQL adapter for Python to interact with the database.
